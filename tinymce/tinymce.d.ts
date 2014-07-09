@@ -52,7 +52,7 @@ declare module tinymce {
     }
 
     export interface Editor {
-        $: dom.DomQuery;
+        // $: dom.DomQuery;
         baseURI: util.URI;
         contentCSS: string[];
         contentStyles: string[];
@@ -264,65 +264,384 @@ declare module tinymce {
             parse(html: string, args?: any): Node;
         }
 
-        export interface Entities {}
-        export interface Node {}
-        export interface SaxParser {}
-        export interface Schema {}
-        export interface Serializer {}
-        export interface Styles {}
-        export interface Writer {}
+        export interface Entities {} // Todo: static stuff
+
+        export interface Node {
+            constructor(name: string, type: number): Node;
+            append(node: Node): Node;
+            attr(name: string, value: string): any;
+            clone(): Node;
+            empty(): Node;
+            getAll(name: string): Node[];
+            insert(node: Node, ref_node: Node, before?: boolean): Node;
+            isEmpty(elements: Object): boolean;
+            remove(): Node;
+            replace(node: Node): Node;
+            unwrap(): void;
+            walk(prev?: boolean): Node;
+            wrap(): void;
+
+            // Todo: Static stuff
+        }
+
+        export interface SaxParser {
+            constructor(settings: Object, schema: Schema): SaxParser;
+            parse(html: string): void;
+        }
+
+        export interface Schema {
+            constructor(settings: Object): Schema;
+            addCustomElements(custom_elements: string): void;
+            addValidChildren(valid_children: string): void;
+            addValidElements(valid_elements: string): void;
+            getBlockElements(): Object;
+            getBoolAttrs(): Object;
+            getCustomElements(): Object;
+            getElementRule(name: string): Object;
+            getInvalidStyles(): Object;
+            getNonEmptyElements(): Object;
+            getSelfClosingElements(): Object;
+            getShortEndedElements(): Object;
+            getSpecialElements(): Object;
+            getTextBlockElements(): Object;
+            getTextInlineElements(): Object;
+            getValidClasses(): Object;
+            getValidStyles(): Object;
+            getWhiteSpaceElements(): Object;
+            isValid(name: string, attr?: string): boolean;
+            isValidChild(name: string, child: string): boolean;
+            setValidElements(valid_elements: string): void;
+        }
+
+        export interface Serializer {
+            constructor(settings: Object, schema: Schema): Schema;
+            serialize(node: Node): string;
+        }
+
+        export interface Styles {
+            // Todo: Constructor?
+            parse(css: string): Object;
+            serialize(styles: Object, elementName?: string): string;
+            toHex(color: string): string;
+        }
+
+        export interface Writer {
+            constructor(settings: Object): Writer;
+            addShortcut(pattern: string, desc: string, cmdFunc: string, sc?: Object): boolean;
+            addShortcut(pattern: string, desc: string, cmdFunc: () => {}, sc?: Object): boolean;
+            cdata(text: string): void;
+            doctype(text: string): void;
+            end(name: string): void;
+            getContent(): string;
+            pi(name: string, text: string): void;
+            reset(): void;
+            start(name: string, attrs?: Object, empty?: boolean): void; // Todo: Is Object for "attrs" correct, docs say Array?
+            text(text: string, raw?: boolean): void;
+        }
     }
 
     export module ui {
-        export interface AbsoluteLayout {}
-        export interface Button {}
-        export interface ButtonGroup {}
-        export interface Checkbox {}
+        export interface AbsoluteLayout extends Layout {
+            constructor(settings: Object): AbsoluteLayout;
+        }
+
+        export interface Button extends Widget {
+            constructor(settings: Object): Button;
+            icon(): string;
+            icon(icon: string): Button;
+            renderHtml(): string;
+        }
+
+        export interface ButtonGroup extends Container {
+            constructor(settings: Object): ButtonGroup;
+        }
+
+        export interface Checkbox extends Widget {
+            constructor(settings: Object): Checkbox;
+            checked(): boolean;
+            checked(state: boolean): Checkbox;
+            value(): boolean;
+            value(state: boolean): Checkbox;
+        }
+
         export interface Collection {}
-        export interface ColorBox {}
-        export interface ColorButton {}
-        export interface ColorPicker {}
-        export interface ComboBox {}
-        export interface Container {}
-        export interface Control {}
+
+        export interface ColorBox extends ComboBox {
+            constructor(settings: Object): ColorBox;
+        }
+
+        export interface ColorButton extends PanelButton {
+            constructor(settings: Object): ColorButton;
+            color(): string;
+            color(color: string): ColorButton;
+        }
+
+        export interface ColorPicker extends Widget {
+            constructor(settings: Object): ColorPicker;
+        }
+
+        export interface ComboBox extends Widget {
+            constructor(settings: Object): ComboBox;
+            postRender(): ComboBox;
+            value(): string;
+            value(value: string): ComboBox;
+        }
+
+        export interface Container extends Control {
+            constructor(settings: Object): Container;
+            add(items: Control): Collection;
+            add(items: Object): Collection;
+            add(items: any[]): Collection;
+            append(items: any[]): Container;
+            append(items: Collection): Container;
+            create(items: any[]): Control[];
+            find(selector: string): Collection;
+            focus(): Container;
+            focus(keyboard: boolean): Container;
+            fromJSON(data: Object): Container;
+            insert(items: any[], index: number, before: boolean): void;
+            insert(items: Collection, index: number, before: boolean): void;
+            items(): Collection;
+            postRender(): Container;
+            prepend(items: any[]): Container;
+            prepend(items: Collection): Container;
+            reflow(): Container;
+            recalc(): void;
+            renderHtml(): string;
+            replace(oldItem: Control, newItem: Control): void;
+            toJSON(): Object;
+        }
+
+        export interface Control {
+            constructor(settings: Object): Control;
+            active(state: boolean): any;
+            addClass(cls: string, group: string): Control;
+            after(items: any[]): Control;
+            after(items: Collection): Control;
+            aria(name: string, value: string): Control;
+            before(items: any[]): Control;
+            before(items: Collection): Control;
+            blur(): Control;
+            classes(group: string): string;
+            disabled(): boolean;
+            disabled(state: boolean): Control;
+            encode(text: string, translate: boolean): string;
+            encode(text: Object, translate: boolean): string;
+            encode(text: string[], translate: boolean): string;
+            findCommonAncestor(ctrl1: Control, ctrl2: Control): Control;
+            fire(name: string, args: Object): Object;
+            fire(name: string, args: Object, bubble: boolean): Object;
+            focus(): Control;
+            getContainerElm(): Element;
+            getEl(suffix: string, dropCache: boolean): Element;
+            getParentCtrl(elm: Element): Control;
+            hasClass(cls: string, group: string): boolean;
+            hasEventListeners(name: string): boolean;
+            height(): number;
+            height(value: number): Control;
+            hide(): Control;
+            initLayoutRect(): Object;
+            innerHtml(html: string): Control;
+            layoutRect(newRect?: Object): Object;
+            name(): string;
+            name(value: string): Control;
+            next(): Control;
+            off(name: string, callback: () => {}): Control;
+            on(name: string, callback: () => {}): Control;
+            parent(): Control;
+            parent(parent: Container): Control;
+            parents(selector?: string): Collection;
+            parentsAndSelf(selector?: string): Collection;
+            prev(): Control;
+            reflow(): Control;
+            postRender(): Control;
+            remove(): Control;
+            removeClass(cls: string, group: string): Control;
+            renderBefore(elm: Element): Control;
+            repaint(): void;
+            scrollIntoView(align: string): Control;
+            show(): Control;
+            text(): string;
+            text(value: string): Control;
+            title(): string;
+            title(value: string): Control;
+            toggleClass(cls: string, state: boolean, group: string): Control;
+            translate(text: string): string;
+            visible(): boolean;
+            visible(state: boolean): Control;
+            width(): number;
+            width(value: number): Control;
+        }
+        /*
+        export interface ControlSettings {
+            border: string;
+            classes: string;
+            disabled: boolean;
+            hidden: boolean;
+            margin: string;
+            minHeight: number;
+            minWidth: number;
+            name: string;
+            padding: string;
+            role: string;
+            style: string;
+        }
+        */
+
         export interface DragHelper {}
         export interface ElementPath {}
         export interface Factory {}
-        export interface FieldSet {}
-        export interface FilePicker {}
-        export interface FitLayout {}
-        export interface FlexLayout {}
-        export interface FloatPanel {}
-        export interface FlowLayout {}
-        export interface Form {}
-        export interface FormatControls {}
-        export interface FormItem {}
-        export interface GridLayout {}
-        export interface Iframe {}
+
+        export interface FieldSet extends Form {
+            constructor(settings: Object): FieldSet;
+        }
+
+        export interface FilePicker extends ComboBox {
+            constructor(settings: Object): FilePicker;
+        }
+
+        export interface FitLayout extends AbsoluteLayout {
+            constructor(settings: Object): FitLayout;
+        }
+
+        export interface FlexLayout extends AbsoluteLayout {
+            constructor(settings: Object): FlexLayout;
+        }
+        /*
+        export interface FlexLayoutSettings extends AbsoluteLayoutSettings {
+            align: string;
+            direction: string;
+            flex: number;
+            pack: string;
+        }
+        */
+
+        export interface FloatPanel extends Panel {
+            constructor(settings: Object): FloatPanel;
+            close(): void;
+            hide(): FloatPanel;
+            hideAll(): void;
+            // remove(): void;
+            show(): FloatPanel;
+            // Todo: Static methods
+        }
+
+        export interface FlowLayout extends Layout {
+            constructor(settings: Object): FlowLayout;
+        }
+
+        export interface Form extends Container {
+            constructor(settings: Object): Form;
+            postRender(): Form;
+            preRender(): void;
+            submit(): Object;
+        }
+
+        // Internal class
+        // export interface FormatControls {}
+
+        export interface FormItem extends Container {
+            constructor(settings: Object): FormItem;
+        }
+        /*
+        export interface FormItemSettings extends ContainerSettings {
+            label: string;
+        }
+        */
+
+        export interface GridLayout extends AbsoluteLayout {
+            constructor(settings: Object): GridLayout;
+        }
+        /*
+        export interface GridLayoutSettings extends AbsoluteLayoutSettings {
+            alignH: any;
+            alignV: any;
+            columns: number;
+            pack: string;
+            spacing: number;
+            spacingH: number;
+            spacingV: number;
+        }
+        */
+
+        export interface Iframe extends Widget {
+            constructor(settings: Object): Iframe;
+            html(html: string, callback?: () => {}): Iframe;
+            src(src: string): void;
+        }
+
         export interface KeyboardNavigation {}
         export interface Label {}
-        export interface Layout {}
+
+        export interface Layout {
+            constructor(settings: Object): Layout;
+            postRender(container: Container): void;
+            preRender(container: Container): void;
+            recalc(container: Container): void;
+            renderHtml(container: Container): void;
+        }
+
         export interface ListBox {}
         export interface Menu {}
         export interface MenuBar {}
         export interface MenuButton {}
         export interface MenuItem {}
         export interface MessageBox {}
-        export interface Panel {}
-        export interface PanelButton {}
+
+        export interface Panel extends Container {
+            constructor(settings: Object): Panel;
+            // Todo: Mixes
+        }
+
+        export interface PanelButton extends Button {
+            constructor(settings: Object): PanelButton;
+            hidePanel(): void;
+            showPanel(): void;
+        }
+
         export interface Path {}
         export interface Radio {}
         export interface ResizeHandle {}
         export interface Selector {}
         export interface Spacer {}
         export interface SplitButton {}
-        export interface StackLayout {}
+
+        export interface StackLayout extends FlowLayout {
+            constructor(settings: Object): StackLayout;
+        }
+
         export interface TabPanel {}
         export interface TextBox {}
         export interface Throbber {}
         export interface Toolbar {}
         export interface ToolTip {}
-        export interface Widget {}
+
+        export interface Widget extends Control {
+            constructor(settings: Object): Widget;
+            active(): boolean;
+            active(state: boolean): Widget;
+            remove(): Control;
+            tooltip(): ToolTip;
+        }
+        /*
+        export interface WidgetSettings extends ControlSettings {
+            autofocus: boolean;
+            border: string;
+            classes: string;
+            disabled: boolean;
+            hidden: boolean;
+            margin: string;
+            minHeight: number;
+            minWidth: number;
+            name: string;
+            padding: string;
+            role: string;
+            style: string;
+            text: string;
+            tooltip: string;
+        }
+        */
+
         export interface Window {}
         export interface Movable {}
         export interface Resizable {}

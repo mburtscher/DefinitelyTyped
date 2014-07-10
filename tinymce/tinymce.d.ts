@@ -9,6 +9,7 @@ declare module tinymce {
         // Todo: Docs say this is a pseudo-class ..
     }
 
+    /*
     export interface Event {
         type: string;
         isDefaultPrevented(): boolean;
@@ -50,6 +51,7 @@ declare module tinymce {
         target: DOMElement;
         width: Number;
     }
+    */
 
     export interface Editor {
         // $: dom.DomQuery;
@@ -242,7 +244,7 @@ declare module tinymce {
             addAttributeFilter(callback: () => {}): void;
             addNodeFilter(callback: () => {}): void;
             addRules(rules: string): void;
-            serialize(node: DOMNode, args: any): void;
+            serialize(node: Node, args: any): void;
             setRules(rules: string): void;
         }
 
@@ -516,7 +518,7 @@ declare module tinymce {
         }
         */
 
-        export interface FloatPanel extends Panel {
+        export interface FloatPanel extends Panel, Movable<FloatPanel>, Resizable<FloatPanel> {
             constructor(settings: Object): FloatPanel;
             close(): void;
             hide(): FloatPanel;
@@ -570,8 +572,14 @@ declare module tinymce {
             src(src: string): void;
         }
 
-        export interface KeyboardNavigation {}
-        export interface Label {}
+        export interface KeyboardNavigation {
+            constructor(): KeyboardNavigation;
+        }
+
+        export interface Label extends Widget {
+            constructor(settings: Object): Label;
+            renderHtml(): string;
+        }
 
         export interface Layout {
             constructor(settings: Object): Layout;
@@ -581,14 +589,41 @@ declare module tinymce {
             renderHtml(container: Container): void;
         }
 
-        export interface ListBox {}
-        export interface Menu {}
-        export interface MenuBar {}
-        export interface MenuButton {}
-        export interface MenuItem {}
-        export interface MessageBox {}
+        export interface ListBox extends MenuButton {
+            constructor(settings: Object): ListBox;
+        }
 
-        export interface Panel extends Container {
+        export interface Menu extends FloatPanel {
+            constructor(settings: Object): Menu;
+            cancel(): void;
+            preRender(): void;
+        }
+
+        export interface MenuBar extends Toolbar {
+            constructor(settings: Object): MenuBar;
+        }
+
+        export interface MenuButton extends Button {
+            constructor(settings: Object): MenuButton;
+            hideMenu(): void;
+            showMenu(): void;
+        }
+
+        export interface MenuItem extends Widget {
+            constructor(settings: Object): MenuItem;
+            hasMenus(): boolean;
+            hideMenu(): void;
+            showMenu(): void;
+        }
+
+        export interface MessageBox extends Window {
+            constructor(settings: Object): MessageBox;
+            alert(settings: Object, callback: () => {}): void;
+            confirm(settings: Object, callback: () => {}): void;
+            // Todo: Static stuff
+        }
+
+        export interface Panel extends Container, Scrollable<Panel> {
             constructor(settings: Object): Panel;
             // Todo: Mixes
         }
@@ -599,22 +634,62 @@ declare module tinymce {
             showPanel(): void;
         }
 
-        export interface Path {}
-        export interface Radio {}
-        export interface ResizeHandle {}
-        export interface Selector {}
-        export interface Spacer {}
-        export interface SplitButton {}
+        export interface Path extends Widget {
+            constructor(settings: Object): Path;
+            data(): string[];
+            data(data: string[]): Path;
+        }
+
+        export interface Radio extends Checkbox {
+            constructor(settings: Object): Radio;
+        }
+
+        export interface ResizeHandle extends Widget {
+            constructor(settings: Object): ResizeHandle;
+        }
+
+        export interface Selector {
+            constructor(selector: string): Selector;
+            find(container: Control): Collection;
+            match(control: Control, selectors: Selector[]): boolean;
+        }
+
+        export interface Spacer extends Widget {
+            constructor(settings: Object): Spacer;
+        }
+
+        export interface SplitButton extends MenuButton {
+            constructor(settings: Object): SplitButton;
+        }
 
         export interface StackLayout extends FlowLayout {
             constructor(settings: Object): StackLayout;
         }
 
-        export interface TabPanel {}
-        export interface TextBox {}
-        export interface Throbber {}
-        export interface Toolbar {}
-        export interface ToolTip {}
+        export interface TabPanel extends Panel {
+            constructor(settings: Object): TabPanel;
+            activateTab(idx: number): void;
+        }
+
+        export interface TextBox extends Widget {
+            constructor(settings: Object): TextBox;
+            value(): string;
+            value(value: string): TextBox;
+        }
+
+        export interface Throbber {
+            constructor(elm: Element, inline?: boolean): Throbber;
+            hide(): Throbber;
+            show(time: number): Throbber;
+        }
+
+        export interface Toolbar extends Container {
+            constructor(settings: Object): Toolbar;
+        }
+
+        export interface ToolTip extends Control, Movable<ToolTip> {
+            constructor(settings: Object): ToolTip;
+        }
 
         export interface Widget extends Control {
             constructor(settings: Object): Widget;
@@ -642,9 +717,78 @@ declare module tinymce {
         }
         */
 
-        export interface Window {}
-        export interface Movable {}
-        export interface Resizable {}
-        export interface Scrollable {}
+        export interface Window extends FloatPanel {
+            constructor(settings: Object): Window;
+            fullscreen(): boolean;
+            fullscreen(state: boolean): Window;
+            getContentWindow(): Window;
+            submit(): Object;
+        }
+
+        export interface Movable<T> {
+            moveBy(dx: number, dy: number): T;
+            moveRel(elm: Element, rel: string): T;
+            moveTo(x: number, y: number): T;
+            testMoveRel(elm: Element, rels: any[]): T;
+        }
+
+        export interface Resizable<T> {
+            resizeBy(dw: number, dh: number): T;
+            resizeTo(w: number, h: number): T;
+            resizeToContent(): void;
+        }
+
+        export interface Scrollable<T> {}
+    }
+
+    export module util {
+        export interface Color {
+            constructor(value: string): Color;
+            parse(value: Object): Color;
+            parse(value: string): Color;
+            toHex(): string;
+            toHsv(): Object; // Todo: Return-type specification
+            toRgb(): Object; // Todo: Return-type specification
+        }
+
+        export interface EventDispatcher {
+            constructor(): EventDispatcher;
+            fire(name: string, args?: Object): Object;
+            has(name: string): boolean;
+            off(): Object;
+            off(name: string): Object;
+            off(name: string, callback: () => {}): Object;
+            on(name: string, callback: () => {}, first?: boolean): Object;
+            once(name: string, callback: () => {}, first?: boolean): Object;
+            // Todo: Statics
+        }
+
+        export interface I18n {
+            rtl: boolean;
+
+            constructor(): I18n;
+            add(code: string, items: Object): void;
+            translate(text: string): string;
+            translate(text: Object): string;
+            translate(text: any[]): string;
+        }
+
+        export interface JSONRequest {
+            constructor(settings: Object): JSONRequest;
+            send(args: Object): void;
+        }
+
+        export interface URI {
+            constructor(url: string, settings: Object): URI;
+            getURI(): string;
+            getURI(noProtoHost: boolean): string;
+            isSameOrigin(uri: URI): boolean;
+            setPath(path: string): void;
+            toAbsPath(base: string, path: string): void;
+            toAbsolute(uri: string): string;
+            toAbsolute(uri: string, noHost: boolean): string;
+            toRelPath(base: string, path: string): void;
+            toRelative(uri: string): string;
+        }
     }
 }

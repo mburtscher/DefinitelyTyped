@@ -1,5 +1,18 @@
 declare module tinymce {
-    export interface AddOnManager { } // Todo: No docs ...
+    export var PluginManager: AddOnManager;
+
+    export function each(object: Object, callback: (item: any) => void, scope?: Object): void;
+
+    export interface AddOnManager {
+        constructor(): AddOnManager;
+        get(name: string): Plugin;
+        dependencies(name: string): any;
+        requireLangPack(name: string, languages?: string): void;
+        add(id: string, addOn: Plugin, dependencies?: any): Plugin;
+        addComponents(pluginName: string, scripts: string[]): void;
+        load(name: string, addOnUrl: string, callback?: () => void, scope?: Object): void;
+        // Todo: createUrl()
+    }
 
     export interface Theme {
         renderUI(obj: Object): Object; // Todo: Param + return-type may be specified more detailled
@@ -78,18 +91,18 @@ declare module tinymce {
 
         constructor(id: string, settings: Object, editorManager: EditorManager);
         addButton(name: string, settings: Object): void; // Todo: Specify settings structure
-        addCommand(name: string, callback: () => {}, scope?: Object): void; // Todo: Callback type
+        addCommand(name: string, callback: () => void, scope?: Object): void; // Todo: Callback type
         addMenuItem(name: string, settings: Object): void; // Todo: Specify settings structre
-        addQueryStateHandler(name: string, callback: () => {}, scope?: Object): void; // Todo: Callback type
-        addQueryValueHandler(name: string, callback: () => {}, scope?: Object): void; // Todo: Callback type
+        addQueryStateHandler(name: string, callback: () => void, scope?: Object): void; // Todo: Callback type
+        addQueryValueHandler(name: string, callback: () => void, scope?: Object): void; // Todo: Callback type
         addShortcut(pattern: string, desc: string, cmdFunc: string, sc?: Object): void;
-        addShortcut(pattern: string, desc: string, cmdFunc: () => {}, sc?: Object): void; // Todo: Callback parameters?
+        addShortcut(pattern: string, desc: string, cmdFunc: () => void, sc?: Object): void; // Todo: Callback parameters?
         addVisual(elm?: Element): void;
         convertURL(url: string, name: string, elm: string): string;
         convertURL(url: string, name: string, elm: HTMLElement): string;
         destroy(automatic?: boolean): void;
         execCallback(name: string): any;
-        execCommand(cmd: string, ui: boolean, value?: any, a?: Object): void;
+        execCommand(cmd: string, ui?: boolean, value?: any, a?: Object): void;
         fire(); // Todo: No docs ...
         focus(skip_focus: boolean): void;
         getBody(): Element;
@@ -109,9 +122,10 @@ declare module tinymce {
         isHidden(): boolean;
         load(args?: any): string; // Todo: Any correct or Object?
         nodeChanged(args?: any): void; // Todo: Any correct or Object?
-        off(name: string, callback: () => {}): Object; // Todo: Callback param correct?
-        on(name: string, callback: () => {}, first?: boolean): Object;
-        once(name: string, callback: () => {}): Object; // Todo: Callback param correct?
+        off(name: string, callback: () => void): Object; // Todo: Callback param correct?
+        on(name: string, callback: () => void): Object;
+        on(name: string, callback: () => void, first: boolean): Object;
+        once(name: string, callback: () => void): Object; // Todo: Callback param correct?
         queryCommandState(cmd: string): boolean;
         queryCommandValue(cmd: string): any; // Todo: Return type correct?
         remove(): void;
@@ -144,7 +158,8 @@ declare module tinymce {
         constructor(ed: Editor);
         apply(name: string, vars?: Object, node?: Node): void;
         canApply(name: string): boolean;
-        formatChanged(formats: string, callback: (state: any, args: Object) => {}, similar: boolean): void; // Todo: Correct?
+        formatChanged(formats: string, callback: (state: any, args: Object) => void): void;
+        formatChanged(formats: string, callback: (state: any, args: Object) => void, similar: boolean): void;
         get(name: string): any;
         getCssText(name: string): string;
         getCssText(format: Object): string;
@@ -166,7 +181,7 @@ declare module tinymce {
         hasRedo(): boolean;
         hasUndo(): boolean;
         redo(): Object;
-        transact(callback: () => {}): void; // Todo: Params for callback?
+        transact(callback: () => void): void; // Todo: Params for callback?
         undo(): Object;
     }
 
@@ -222,18 +237,18 @@ declare module tinymce {
         export interface DOMUtils {}
 
         export interface EventUtils {
-            bind(target: Object, names: string, callback: () => {}, scope: Object): () => {}; // Todo: Specify callback signature
+            bind(target: Object, names: string, callback: () => void, scope: Object): () => void; // Todo: Specify callback signature
             clean(target: Object): EventUtils;
             fire(target: Object, name: string, args?: any): EventUtils;
-            unbind(target: Object, names?: string, callback?: () => {}): EventUtils;
+            unbind(target: Object, names?: string, callback?: () => void): EventUtils;
         }
 
         export interface ScriptLoader {
-            add(url: string, callback?: () => {}, scope?: Object): void;
+            add(url: string, callback?: () => void, scope?: Object): void;
             isDone(url: string): boolean;
-            load(url: string, callback?: () => {}, scope?: Object): void;
-            loadQueue(callback?: () => {}, scope?: Object): void;
-            loadScripts(scripts: any[], callback?: () => {}, scope?: Object): void; // Todo: First paramter type?
+            load(url: string, callback?: () => void, scope?: Object): void;
+            loadQueue(callback?: () => void, scope?: Object): void;
+            loadScripts(scripts: any[], callback?: () => void, scope?: Object): void; // Todo: First paramter type?
             markDone(u: string): void;
         }
 
@@ -241,8 +256,8 @@ declare module tinymce {
 
         export interface Serializer {
             constructor(settings: Object, editor: Editor);
-            addAttributeFilter(callback: () => {}): void;
-            addNodeFilter(callback: () => {}): void;
+            addAttributeFilter(callback: () => void): void;
+            addNodeFilter(callback: () => void): void;
             addRules(rules: string): void;
             serialize(node: Node, args: any): void;
             setRules(rules: string): void;
@@ -260,8 +275,8 @@ declare module tinymce {
     export module html {
         export interface DomParser {
             constructor(settings: Object, schema: Schema);
-            addAttributeFilter(callback: () => {}): void;
-            addNodeFilter(callback: () => {}): void;
+            addAttributeFilter(callback: () => void): void;
+            addNodeFilter(callback: () => void): void;
             filterNode(Node: Node): Node;
             parse(html: string, args?: any): Node;
         }
@@ -330,7 +345,7 @@ declare module tinymce {
         export interface Writer {
             constructor(settings: Object): Writer;
             addShortcut(pattern: string, desc: string, cmdFunc: string, sc?: Object): boolean;
-            addShortcut(pattern: string, desc: string, cmdFunc: () => {}, sc?: Object): boolean;
+            addShortcut(pattern: string, desc: string, cmdFunc: () => void, sc?: Object): boolean;
             cdata(text: string): void;
             doctype(text: string): void;
             end(name: string): void;
@@ -348,10 +363,17 @@ declare module tinymce {
         }
 
         export interface Button extends Widget {
+            settings: ButtonSettings;
+
             constructor(settings: Object): Button;
             icon(): string;
             icon(icon: string): Button;
             renderHtml(): string;
+        }
+        export interface ButtonSettings extends WidgetSettings {
+            icon: string;
+            image: string;
+            size: string;
         }
 
         export interface ButtonGroup extends Container {
@@ -415,7 +437,9 @@ declare module tinymce {
         }
 
         export interface Control {
-            constructor(settings: Object): Control;
+            settings: ControlSettings;
+
+            constructor(settings: ControlSettings): Control;
             active(state: boolean): any;
             addClass(cls: string, group: string): Control;
             after(items: any[]): Control;
@@ -448,8 +472,8 @@ declare module tinymce {
             name(): string;
             name(value: string): Control;
             next(): Control;
-            off(name: string, callback: () => {}): Control;
-            on(name: string, callback: () => {}): Control;
+            off(name: string, callback: () => void): Control;
+            on(name: string, callback: () => void): Control;
             parent(): Control;
             parent(parent: Container): Control;
             parents(selector?: string): Collection;
@@ -474,7 +498,6 @@ declare module tinymce {
             width(): number;
             width(value: number): Control;
         }
-        /*
         export interface ControlSettings {
             border: string;
             classes: string;
@@ -488,7 +511,6 @@ declare module tinymce {
             role: string;
             style: string;
         }
-        */
 
         export interface DragHelper {}
         export interface ElementPath {}
@@ -568,7 +590,7 @@ declare module tinymce {
 
         export interface Iframe extends Widget {
             constructor(settings: Object): Iframe;
-            html(html: string, callback?: () => {}): Iframe;
+            html(html: string, callback?: () => void): Iframe;
             src(src: string): void;
         }
 
@@ -604,9 +626,14 @@ declare module tinymce {
         }
 
         export interface MenuButton extends Button {
-            constructor(settings: Object): MenuButton;
+            settings: MenuButtonSettings;
+
+            constructor(settings: MenuButtonSettings): MenuButton;
             hideMenu(): void;
             showMenu(): void;
+        }
+        export interface MenuButtonSettings extends ButtonSettings {
+            menu: any;
         }
 
         export interface MenuItem extends Widget {
@@ -618,8 +645,8 @@ declare module tinymce {
 
         export interface MessageBox extends Window {
             constructor(settings: Object): MessageBox;
-            alert(settings: Object, callback: () => {}): void;
-            confirm(settings: Object, callback: () => {}): void;
+            alert(settings: Object, callback: () => void): void;
+            confirm(settings: Object, callback: () => void): void;
             // Todo: Static stuff
         }
 
@@ -692,13 +719,14 @@ declare module tinymce {
         }
 
         export interface Widget extends Control {
-            constructor(settings: Object): Widget;
+            settings: WidgetSettings;
+
+            constructor(settings: WidgetSettings): Widget;
             active(): boolean;
             active(state: boolean): Widget;
             remove(): Control;
             tooltip(): ToolTip;
         }
-        /*
         export interface WidgetSettings extends ControlSettings {
             autofocus: boolean;
             border: string;
@@ -715,7 +743,6 @@ declare module tinymce {
             text: string;
             tooltip: string;
         }
-        */
 
         export interface Window extends FloatPanel {
             constructor(settings: Object): Window;
@@ -751,17 +778,21 @@ declare module tinymce {
             toRgb(): Object; // Todo: Return-type specification
         }
 
-        export interface EventDispatcher {
-            constructor(): EventDispatcher;
+        interface EventDispatcher {
+            //constructor(): EventDispatcher;
             fire(name: string, args?: Object): Object;
             has(name: string): boolean;
             off(): Object;
             off(name: string): Object;
-            off(name: string, callback: () => {}): Object;
-            on(name: string, callback: () => {}, first?: boolean): Object;
-            once(name: string, callback: () => {}, first?: boolean): Object;
-            // Todo: Statics
+            off(name: string, callback: () => void): Object;
+            on(name: string, callback: () => void, first?: boolean): Object;
+            once(name: string, callback: () => void, first?: boolean): Object;
         }
+        interface EventDispatcher_Static {
+            new (): EventDispatcher;
+            isNative(): boolean;
+        }
+        export var EventDispatcher: EventDispatcher_Static;
 
         export interface I18n {
             rtl: boolean;
@@ -790,5 +821,16 @@ declare module tinymce {
             toRelPath(base: string, path: string): void;
             toRelative(uri: string): string;
         }
+
+        interface XHR_Static {
+            send(settings: Object): void;
+        }
+        export var XHR: XHR_Static;
+
+        interface JSON_Static {
+            parse(value: string): Object;
+            serialize(value: Object): string;
+        }
+        export var JSON: JSON_Static;
     }
 }

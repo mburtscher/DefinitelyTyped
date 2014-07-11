@@ -359,8 +359,11 @@ declare module tinymce {
 
     export module ui {
         export interface AbsoluteLayout extends Layout {
-            constructor(settings: Object): AbsoluteLayout;
+            settings: AbsoluteLayoutSettings;
+
+            constructor(settings: AbsoluteLayoutSettings): AbsoluteLayout;
         }
+        export interface AbsoluteLayoutSettings extends LayoutSettings {}
 
         export interface Button extends Widget {
             settings: ButtonSettings;
@@ -371,48 +374,74 @@ declare module tinymce {
             renderHtml(): string;
         }
         export interface ButtonSettings extends WidgetSettings {
-            icon: string;
-            image: string;
-            size: string;
+            icon?: string;
+            image?: string;
+            size?: string;
         }
 
         export interface ButtonGroup extends Container {
-            constructor(settings: Object): ButtonGroup;
+            settings: ButtonGroupSettings;
+
+            constructor(settings: ButtonGroupSettings): ButtonGroup;
         }
+        export interface ButtonGroupSettings extends ContainerSettings {}
 
         export interface Checkbox extends Widget {
-            constructor(settings: Object): Checkbox;
+            settings: CheckboxSettings;
+
+            constructor(settings: CheckboxSettings): Checkbox;
             checked(): boolean;
             checked(state: boolean): Checkbox;
             value(): boolean;
             value(state: boolean): Checkbox;
         }
+        export interface CheckboxSettings extends WidgetSettings {
+            checked?: boolean;
+        }
 
         export interface Collection {}
 
         export interface ColorBox extends ComboBox {
-            constructor(settings: Object): ColorBox;
+            settings: ColorBoxSettings;
+
+            constructor(settings: ColorBoxSettings): ColorBox;
         }
+        export interface ColorBoxSettings extends ComboBoxSettings {}
 
         export interface ColorButton extends PanelButton {
-            constructor(settings: Object): ColorButton;
+            settings: ColorButtonSettings;
+
+            constructor(settings: ColorButtonSettings): ColorButton;
             color(): string;
             color(color: string): ColorButton;
         }
+        export interface ColorButtonSettings extends PanelButtonSettings {}
 
         export interface ColorPicker extends Widget {
-            constructor(settings: Object): ColorPicker;
+            settings: ColorPickerSettings;
+
+            constructor(settings: ColorPickerSettings): ColorPicker;
+        }
+        export interface ColorPickerSettings extends WidgetSettings {
+            color?: string;
         }
 
         export interface ComboBox extends Widget {
-            constructor(settings: Object): ComboBox;
+            settings: ComboBoxSettings;
+
+            constructor(settings: ComboBoxSettings): ComboBox;
             postRender(): ComboBox;
             value(): string;
             value(value: string): ComboBox;
         }
+        export interface ComboBoxSettings extends WidgetSettings {
+            placeholder?: string;
+        }
 
         export interface Container extends Control {
-            constructor(settings: Object): Container;
+            settings: ContainerSettings;
+
+            constructor(settings: ContainerSettings): Container;
             add(items: Control): Collection;
             add(items: Object): Collection;
             add(items: any[]): Collection;
@@ -434,6 +463,11 @@ declare module tinymce {
             renderHtml(): string;
             replace(oldItem: Control, newItem: Control): void;
             toJSON(): Object;
+        }
+        export interface ContainerSettings extends ControlSettings {
+            defaults?: Object;
+            items?: any;
+            layout?: string;
         }
 
         export interface Control {
@@ -499,17 +533,17 @@ declare module tinymce {
             width(value: number): Control;
         }
         export interface ControlSettings {
-            border: string;
-            classes: string;
-            disabled: boolean;
-            hidden: boolean;
-            margin: string;
-            minHeight: number;
-            minWidth: number;
-            name: string;
-            padding: string;
-            role: string;
-            style: string;
+            border?: string;
+            classes?: string;
+            disabled?: boolean;
+            hidden?: boolean;
+            margin?: string;
+            minHeight?: number;
+            minWidth?: number;
+            name?: string;
+            padding?: string;
+            role?: string;
+            style?: string;
         }
 
         export interface DragHelper {}
@@ -517,31 +551,40 @@ declare module tinymce {
         export interface Factory {}
 
         export interface FieldSet extends Form {
-            constructor(settings: Object): FieldSet;
+            settings: FieldSetSettings;
+
+            constructor(settings: FieldSetSettings): FieldSet;
         }
+        export interface FieldSetSettings extends FormSettings {}
 
         export interface FilePicker extends ComboBox {
-            constructor(settings: Object): FilePicker;
+            settings: FilePickerSettings;
+
+            constructor(settings: FilePickerSettings): FilePicker;
         }
+        export interface FilePickerSettings extends ComboBoxSettings {}
 
         export interface FitLayout extends AbsoluteLayout {
-            constructor(settings: Object): FitLayout;
+            settings: FitLayoutSettings;
+
+            constructor(settings: FitLayoutSettings): FitLayout;
         }
+        export interface FitLayoutSettings extends AbsoluteLayoutSettings {}
 
         export interface FlexLayout extends AbsoluteLayout {
             constructor(settings: Object): FlexLayout;
         }
-        /*
         export interface FlexLayoutSettings extends AbsoluteLayoutSettings {
-            align: string;
-            direction: string;
-            flex: number;
-            pack: string;
+            align?: string;
+            direction?: string;
+            flex?: number;
+            pack?: string;
         }
-        */
 
         export interface FloatPanel extends Panel, Movable<FloatPanel>, Resizable<FloatPanel> {
-            constructor(settings: Object): FloatPanel;
+            settings: FloatPanelSettings;
+
+            constructor(settings: FloatPanelSettings): FloatPanel;
             close(): void;
             hide(): FloatPanel;
             hideAll(): void;
@@ -549,49 +592,63 @@ declare module tinymce {
             show(): FloatPanel;
             // Todo: Static methods
         }
-
-        export interface FlowLayout extends Layout {
-            constructor(settings: Object): FlowLayout;
+        export interface FloatPanelSettings extends PanelSettings {
+            autohide?: boolean;
         }
 
+        export interface FlowLayout extends Layout {
+            settings: FlowLayoutSettings;
+
+            constructor(settings: FlowLayoutSettings): FlowLayout;
+        }
+        export interface FlowLayoutSettings extends LayoutSettings {}
+
         export interface Form extends Container {
-            constructor(settings: Object): Form;
+            settings: FormSettings;
+
+            constructor(settings: FormSettings): Form;
             postRender(): Form;
             preRender(): void;
             submit(): Object;
         }
+        export interface FormSettings extends ContainerSettings {}
 
         // Internal class
         // export interface FormatControls {}
 
         export interface FormItem extends Container {
-            constructor(settings: Object): FormItem;
+            settings: FormItemSettings;
+
+            constructor(settings: FormItemSettings): FormItem;
         }
-        /*
         export interface FormItemSettings extends ContainerSettings {
-            label: string;
+            label?: string;
         }
-        */
 
         export interface GridLayout extends AbsoluteLayout {
-            constructor(settings: Object): GridLayout;
+            settings: GridLayoutSettings;
+
+            constructor(settings: GridLayoutSettings): GridLayout;
         }
-        /*
         export interface GridLayoutSettings extends AbsoluteLayoutSettings {
-            alignH: any;
-            alignV: any;
-            columns: number;
-            pack: string;
-            spacing: number;
-            spacingH: number;
-            spacingV: number;
+            alignH?: any;
+            alignV?: any;
+            columns?: number;
+            pack?: string;
+            spacing?: number;
+            spacingH?: number;
+            spacingV?: number;
         }
-        */
 
         export interface Iframe extends Widget {
-            constructor(settings: Object): Iframe;
+            settings: IframeSettings;
+
+            constructor(settings: IframeSettings): Iframe;
             html(html: string, callback?: () => void): Iframe;
             src(src: string): void;
+        }
+        export interface IframeSettings extends WidgetSettings {
+            url?: string;
         }
 
         export interface KeyboardNavigation {
@@ -599,31 +656,48 @@ declare module tinymce {
         }
 
         export interface Label extends Widget {
-            constructor(settings: Object): Label;
+            settings: LabelSettings;
+
+            constructor(settings: LabelSettings): Label;
             renderHtml(): string;
         }
+        export interface LabelSettings extends WidgetSettings {}
 
         export interface Layout {
-            constructor(settings: Object): Layout;
+            settings: LayoutSettings;
+
+            constructor(settings: LayoutSettings): Layout;
             postRender(container: Container): void;
             preRender(container: Container): void;
             recalc(container: Container): void;
             renderHtml(container: Container): void;
         }
+        export interface LayoutSettings {}
 
         export interface ListBox extends MenuButton {
-            constructor(settings: Object): ListBox;
+            settings: ListBoxSettings;
+
+            constructor(settings: ListBoxSettings): ListBox;
+        }
+        export interface ListBoxSettings extends MenuButtonSettings {
+            values?: string[];
         }
 
         export interface Menu extends FloatPanel {
-            constructor(settings: Object): Menu;
+            settings: MenuSettings;
+
+            constructor(settings: MenuSettings): Menu;
             cancel(): void;
             preRender(): void;
         }
+        export interface MenuSettings extends FloatPanelSettings {}
 
         export interface MenuBar extends Toolbar {
-            constructor(settings: Object): MenuBar;
+            settings: MenuBarSettings;
+
+            constructor(settings: MenuBarSettings): MenuBar;
         }
+        export interface MenuBarSettings extends ToolbarSettings {}
 
         export interface MenuButton extends Button {
             settings: MenuButtonSettings;
@@ -637,43 +711,70 @@ declare module tinymce {
         }
 
         export interface MenuItem extends Widget {
-            constructor(settings: Object): MenuItem;
+            settings: MenuItemSettings;
+
+            constructor(settings: MenuItemSettings): MenuItem;
             hasMenus(): boolean;
             hideMenu(): void;
             showMenu(): void;
         }
+        export interface MenuItemSettings extends WidgetSettings {
+            menu?: Object[];
+            selectable?: boolean;
+            shortcut?: string;
+        }
 
         export interface MessageBox extends Window {
-            constructor(settings: Object): MessageBox;
+            settings: MessageBoxSettings;
+
+            constructor(settings: MessageBoxSettings): MessageBox;
             alert(settings: Object, callback: () => void): void;
             confirm(settings: Object, callback: () => void): void;
             // Todo: Static stuff
         }
+        export interface MessageBoxSettings extends WindowSettings {}
 
         export interface Panel extends Container, Scrollable<Panel> {
-            constructor(settings: Object): Panel;
+            settings: PanelSettings;
+
+            constructor(settings: PanelSettings): Panel;
             // Todo: Mixes
         }
+        export interface PanelSettings extends ContainerSettings {}
 
         export interface PanelButton extends Button {
-            constructor(settings: Object): PanelButton;
+            settings: PanelButtonSettings;
+
+            constructor(settings: PanelButtonSettings): PanelButton;
             hidePanel(): void;
             showPanel(): void;
         }
+        export interface PanelButtonSettings extends ButtonSettings {}
 
         export interface Path extends Widget {
-            constructor(settings: Object): Path;
+            settings: PathSettings;
+
+            constructor(settings: PathSettings): Path;
             data(): string[];
             data(data: string[]): Path;
         }
+        export interface PathSettings extends WidgetSettings {
+            delimiter?: string;
+        }
 
         export interface Radio extends Checkbox {
-            constructor(settings: Object): Radio;
+            settings: RadioSettings;
+
+            constructor(settings: RadioSettings): Radio;
         }
+        export interface RadioSettings extends CheckboxSettings {}
 
         export interface ResizeHandle extends Widget {
-            constructor(settings: Object): ResizeHandle;
+            settings: ResizeHandleSettings;
+
+            constructor(settings: ResizeHandleSettings): ResizeHandle;
         }
+        export interface ResizeHandleSettings extends WidgetSettings {}
 
         export interface Selector {
             constructor(selector: string): Selector;
@@ -682,26 +783,47 @@ declare module tinymce {
         }
 
         export interface Spacer extends Widget {
-            constructor(settings: Object): Spacer;
+            settings: SpacerSettings;
+
+            constructor(settings: SpacerSettings): Spacer;
         }
+        export interface SpacerSettings extends WidgetSettings {}
 
         export interface SplitButton extends MenuButton {
-            constructor(settings: Object): SplitButton;
+            settings: SplitButtonSettings;
+
+            constructor(settings: SplitButtonSettings): SplitButton;
         }
+        export interface SplitButtonSettings extends MenuButtonSettings {}
 
         export interface StackLayout extends FlowLayout {
-            constructor(settings: Object): StackLayout;
+            settings: StackLayoutSettings;
+
+            constructor(settings: StackLayoutSettings): StackLayout;
         }
+        export interface StackLayoutSettings extends FlowLayoutSettings {}
 
         export interface TabPanel extends Panel {
-            constructor(settings: Object): TabPanel;
+            settings: TabPanelSettings;
+
+            constructor(settings: TabPanelSettings): TabPanel;
             activateTab(idx: number): void;
+        }
+        export interface TabPanelSettings extends PanelSettings {
+            activeTab?: number;
         }
 
         export interface TextBox extends Widget {
-            constructor(settings: Object): TextBox;
+            settings: TextBoxSettings;
+
+            constructor(settings: TextBoxSettings): TextBox;
             value(): string;
             value(value: string): TextBox;
+        }
+        export interface TextBoxSettings extends WidgetSettings {
+            maxLength?: number;
+            multiline?: boolean;
+            size?: number;
         }
 
         export interface Throbber {
@@ -711,12 +833,18 @@ declare module tinymce {
         }
 
         export interface Toolbar extends Container {
-            constructor(settings: Object): Toolbar;
+            settings: ToolbarSettings;
+
+            constructor(settings: ToolbarSettings): Toolbar;
         }
+        export interface ToolbarSettings extends ContainerSettings {}
 
         export interface ToolTip extends Control, Movable<ToolTip> {
-            constructor(settings: Object): ToolTip;
+            settings: ToolTipSettings;
+
+            constructor(settings: ToolTipSettings): ToolTip;
         }
+        export interface ToolTipSettings extends ControlSettings {}
 
         export interface Widget extends Control {
             settings: WidgetSettings;
@@ -728,29 +856,32 @@ declare module tinymce {
             tooltip(): ToolTip;
         }
         export interface WidgetSettings extends ControlSettings {
-            autofocus: boolean;
-            border: string;
-            classes: string;
-            disabled: boolean;
-            hidden: boolean;
-            margin: string;
-            minHeight: number;
-            minWidth: number;
-            name: string;
-            padding: string;
-            role: string;
-            style: string;
-            text: string;
-            tooltip: string;
+            autofocus?: boolean;
+            border?: string;
+            classes?: string;
+            disabled?: boolean;
+            hidden?: boolean;
+            margin?: string;
+            minHeight?: number;
+            minWidth?: number;
+            name?: string;
+            padding?: string;
+            role?: string;
+            style?: string;
+            text?: string;
+            tooltip?: string;
         }
 
         export interface Window extends FloatPanel {
-            constructor(settings: Object): Window;
+            settings: WindowSettings;
+
+            constructor(settings: WindowSettings): Window;
             fullscreen(): boolean;
             fullscreen(state: boolean): Window;
             getContentWindow(): Window;
             submit(): Object;
         }
+        export interface WindowSettings extends FloatPanelSettings {}
 
         export interface Movable<T> {
             moveBy(dx: number, dy: number): T;
